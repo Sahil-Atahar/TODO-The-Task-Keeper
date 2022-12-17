@@ -395,27 +395,43 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.white,
                                         ),
                                         onPressed: () async {
-                                          DBHelper instance = DBHelper.instance;
+                                          var confirmDelete = true;
+                                          var deletedWidget =
+                                              widgetList.elementAt(index);
+                                          var deletedIndex = index;
+                                          widgetList.removeAt(index);
+                                          setState(() {});
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content:
+                                                const Text('Task List Deleted'),
+                                            behavior: SnackBarBehavior.fixed,
+                                            action: SnackBarAction(
+                                              onPressed: () async {
+                                                confirmDelete = false;
+                                                widgetList.insert(deletedIndex,
+                                                    deletedWidget);
+                                                setState(() {});
+                                              },
+                                              label: 'Undo',
+                                            ),
+                                          ));
+                                          Future.delayed(
+                                              const Duration(seconds: 3),
+                                              () async {
+                                            if (confirmDelete) {
+                                              DBHelper instance =
+                                                  DBHelper.instance;
 
-                                          await instance.deleteTableName(
-                                              namesList.elementAt(
-                                                  index)['tableName']);
-                                          await instance
-                                              .deleteTable(namesList.elementAt(
-                                                  index)['tableName'])
-                                              .then((value) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                              behavior:
-                                                  SnackBarBehavior.floating,
-                                              content: Text('List Deleted'),
-                                            ));
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        HomePage(index: 0)));
+                                              await instance.deleteTableName(
+                                                  namesList.elementAt(
+                                                      index)['tableName']);
+                                              await instance.deleteTable(
+                                                  namesList.elementAt(
+                                                      index)['tableName']);
+                                            }
                                           });
-                                        }),
+                                        })
                                   ],
                                   onPressed: () => Navigator.push(
                                       context,

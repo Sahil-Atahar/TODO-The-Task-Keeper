@@ -603,13 +603,11 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                               const BorderRadius.all(Radius.circular(12.0)),
                           boxShadow: [
                             BoxShadow(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
+                                color: Color(task['bgColor']),
                                 offset: const Offset(-8, -8),
                                 blurRadius: 15.0),
                             BoxShadow(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
+                                color: Color(task['bgColor']),
                                 blurRadius: 15.0,
                                 spreadRadius: 2.0,
                                 offset: const Offset(8, 8))
@@ -618,35 +616,6 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                         child: Stack(
                           alignment: Alignment.topRight,
                           children: [
-                            Visibility(
-                                visible: task['isPinned'] == 'true' ||
-                                    task['isImportant'] == 'true' ||
-                                    task['isHidden'] == 'true' ||
-                                    task['imagesString'].isNotEmpty,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    task['isHidden'] == 'true'
-                                        ? const Text(
-                                            'H',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          )
-                                        : Icon(
-                                            task['isPinned'] == 'true'
-                                                ? Icons.push_pin
-                                                : Icons.star,
-                                            color: Colors.amber,
-                                          ),
-                                    task['imagesString'].isNotEmpty
-                                        ? const Icon(
-                                            Icons.image_outlined,
-                                            color: Colors.amber,
-                                          )
-                                        : const SizedBox()
-                                  ],
-                                )),
                             Column(
                               children: [
                                 Text(
@@ -672,6 +641,38 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                                                 : TextDecoration.none)),
                               ],
                             ),
+                            Visibility(
+                                visible: task['isPinned'] == 'true' ||
+                                    task['isImportant'] == 'true' ||
+                                    task['isHidden'] == 'true' ||
+                                    task['imagesString'].isNotEmpty,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    task['isHidden'] == 'true'
+                                        ? const Text(
+                                            'H',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )
+                                        : task['isPinned'] == 'true' ||
+                                                task['isImportant'] == 'true'
+                                            ? Icon(
+                                                task['isPinned'] == 'true'
+                                                    ? Icons.push_pin
+                                                    : Icons.star,
+                                                color: Colors.amber,
+                                              )
+                                            : const SizedBox(),
+                                    task['imagesString'].isNotEmpty
+                                        ? const Icon(
+                                            Icons.image_rounded,
+                                            color: Colors.amber,
+                                          )
+                                        : const SizedBox()
+                                  ],
+                                )),
                           ],
                         ),
                       ),
@@ -711,15 +712,18 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                               children: [
                                 task['isHidden'] == 'true'
                                     ? const Text('H')
-                                    : Icon(
-                                        task['isPinned'] == 'true'
-                                            ? Icons.push_pin
-                                            : Icons.star,
-                                        color: Colors.amber,
-                                      ),
+                                    : task['isPinned'] == 'true' ||
+                                            task['isImportant'] == 'true'
+                                        ? Icon(
+                                            task['isPinned'] == 'true'
+                                                ? Icons.push_pin
+                                                : Icons.star,
+                                            color: Colors.amber,
+                                          )
+                                        : const SizedBox(),
                                 task['imagesString'].isNotEmpty
                                     ? const Icon(
-                                        Icons.image_outlined,
+                                        Icons.image_rounded,
                                         color: Colors.amber,
                                       )
                                     : const SizedBox()

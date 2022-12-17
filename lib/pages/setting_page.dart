@@ -3,6 +3,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo/main.dart';
 import 'package:todo/pages/homepage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -130,6 +131,38 @@ class _SettingPageState extends State<SettingPage> {
                 });
               }),
             ),
+            ListTile(
+              title: Row(
+                children: const [
+                  CircleAvatar(
+                    backgroundColor: Colors.blue,
+                    child: Icon(
+                      Icons.bug_report,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  Text(
+                    'Report a bug...',
+                  )
+                ],
+              ),
+              onTap: () async {
+                Uri url = Uri(
+                  scheme: 'mailto',
+                  path: 'sahilatahar@gmail.com',
+                );
+
+                try {
+                  await launchUrl(url);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Please, E-Mail us at ${url.path}")));
+                }
+              },
+            )
           ],
         )),
       ),
@@ -151,7 +184,7 @@ class _SettingPageState extends State<SettingPage> {
                         onPressed: initialFontSize > 14
                             ? () {
                                 initialFontSize -= 2;
-                                
+
                                 setState(() {});
                               }
                             : null,

@@ -325,6 +325,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                         : isSomethingChanged
                             ? InkWell(
                                 onTap: () async {
+                                  imagesEditMode = false;
                                   DateTime dateTime = DateTime.now();
                                   var task = {
                                     'title': _titleController.text,
