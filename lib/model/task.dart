@@ -28,6 +28,6 @@ class Task {
     isPinned = task['isPinned'];
     isHidden = task['isHidden'];
     bgColor = task['bgColor'];
-    imageBytes = stringToUintList(imagesString: task['imageString']);
+    imageBytes = stringToUintList(imagesString: task['imagesString']);
   }
 }

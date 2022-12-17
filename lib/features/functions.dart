@@ -5,7 +5,9 @@ List<Uint8List> stringToUintList({required String imagesString}) {
   var images = imagesString.split('\n');
   List<Uint8List> imagesBytes = [];
   for (var image in images) {
-    imagesBytes.add(base64Decode(image));
+    if (image.isNotEmpty) {
+      imagesBytes.add(base64Decode(image));
+    }
   }
   return imagesBytes;
 }

@@ -1,3 +1,4 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
@@ -8,6 +9,7 @@ import 'package:todo/database/db_helper.dart';
 import 'package:todo/model/task.dart';
 
 import '../assets/color_picker.dart';
+import '../features/image_view.dart';
 import 'add_task_page.dart';
 import 'task_list_view_page.dart';
 
@@ -52,11 +54,14 @@ class _EditTaskPageState extends State<EditTaskPage> {
   static String _descriptionText = '';
   static Color bgColor = Colors.white;
   static List<Uint8List> images = [];
+  static bool imagesEditMode = false;
+  bool reverse = false;
 
   @override
   void initState() {
     showMoreFeatures = false;
     numbering = 0;
+    reverse = false;
     super.initState();
   }
 
@@ -71,6 +76,12 @@ class _EditTaskPageState extends State<EditTaskPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
+        if (imagesEditMode) {
+          setState(() {
+            imagesEditMode = false;
+          });
+          return Future.value(false);
+        }
         if (isSomethingChanged) {
           DateTime dateTime = DateTime.now();
           var task = {
@@ -84,7 +95,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
             'isPinned': isPinned.toString(),
             'isHidden': Task.isHidden,
             'bgColor': Task.bgColor,
-            'imagesString': imageToString(bytes: Task.imageBytes)
+            'imagesString': imageToString(bytes: images)
           };
           AddTaskPage(
             nameOfList: EditTaskPage.listName,
@@ -326,8 +337,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                                     'isPinned': isPinned.toString(),
                                     'isHidden': Task.isHidden,
                                     'bgColor': bgColor.value,
-                                    'imagesString':
-                                        imageToString(bytes: Task.imageBytes)
+                                    'imagesString': imageToString(bytes: images)
                                   };
                                   DBHelper instance = DBHelper.instance;
                                   await instance.specialDelete(
@@ -412,8 +422,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                             'isPinned': Task.isPinned,
                             'isHidden': Task.isHidden,
                             'bgColor': Task.bgColor,
-                            'imagesString':
-                                imageToString(bytes: Task.imageBytes)
+                            'imagesString': imageToString(bytes: images)
                           };
                           await instance
                               .insert(TaskListViewPage.listName, newTask)
@@ -443,14 +452,75 @@ class _EditTaskPageState extends State<EditTaskPage> {
                 }),
           ),
           body: SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
+              reverse: true,
               padding:
                   const EdgeInsets.only(left: 22.0, right: 22.0, bottom: 5.0),
               child: Column(
                 children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 3.0,
+                    child: Swiper(
+                      itemCount: images.length,
+                      scale: 0.8,
+                      index: 0,
+                      loop: false,
+                      axisDirection: AxisDirection.left,
+                      pagination: const SwiperPagination(),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(PageTransition(
+                                child: ImageViewer(
+                                    images: images, imageIndex: index),
+                                type: PageTransitionType.theme,
+                                childCurrent: widget,
+                                duration: routAnimationDuration));
+                          },
+                          onLongPress: () {
+                            imagesEditMode = !imagesEditMode;
+                            isSomethingChanged = true;
+                            setState(() {});
+                          },
+                          child: Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(16.0)),
+                                child: Image.memory(
+                                  images.elementAt(index),
+                                  fit: BoxFit.cover,
+                                  width: MediaQuery.of(context).size.width - 20,
+                                ),
+                              ),
+                              Visibility(
+                                visible: imagesEditMode,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                        onPressed: () async {
+                                          images
+                                              .remove(images.elementAt(index));
+                                          setState(() {});
+                                        },
+                                        icon: const Icon(
+                                          Icons.delete_rounded,
+                                          color: Colors.red,
+                                        ))
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                   TextField(
                     onTap: () {
                       showMoreFeatures = false;
+                      reverse = true;
                     },
                     style: TextStyle(
                         fontSize: fontSize + 2, fontWeight: FontWeight.bold),
@@ -492,51 +562,19 @@ class _EditTaskPageState extends State<EditTaskPage> {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                        child: TextField(
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 2,
+                    child: TextField(
                       onTap: () {
                         showMoreFeatures = false;
+                        reverse = true;
                       },
                       style: TextStyle(fontSize: fontSize),
                       readOnly: readOnly,
                       autocorrect: true,
                       mouseCursor: MouseCursor.uncontrolled,
                       textCapitalization: TextCapitalization.sentences,
-                      onChanged: (value) {
-                        var cursorPosition =
-                            _descriptionController.selection.base.offset;
-                        String prefixText = _descriptionController.text
-                            .substring(0, cursorPosition);
-                        String suffixText = _descriptionController.text
-                            .substring(cursorPosition);
-
-                        if (_descriptionText.length < value.length) {
-                          if (numberingListMode && prefixText.endsWith('\n')) {
-                            numbering++;
-                            _descriptionController.text =
-                                '$prefixText($numbering) ${suffixText.isNotEmpty ? suffixText : ''}';
-                            _descriptionController.selection =
-                                TextSelection.fromPosition(TextPosition(
-                                    offset: cursorPosition +
-                                        3 +
-                                        numbering.toString().length));
-                          } else if (listMode && prefixText.endsWith('\n')) {
-                            _descriptionController.text =
-                                '$prefixText• ${suffixText.isNotEmpty ? suffixText : ''}';
-                            _descriptionController.selection =
-                                TextSelection.fromPosition(
-                                    TextPosition(offset: cursorPosition + 2));
-                          }
-                        } else {
-                          if (prefixText.endsWith('\n') && numbering > 0) {
-                            numbering--;
-                          }
-                        }
-                        _descriptionText = value;
-                        isSomethingChanged = true;
-                        setState(() {});
-                      },
+                      onChanged: (value) => descriptionOnChanged(value),
                       controller: _descriptionController,
                       decoration: InputDecoration(
                           hintText: 'Write here something...',
@@ -549,7 +587,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                               fontSize: fontSize)),
                       keyboardType: TextInputType.multiline,
                       maxLines: 10000,
-                    )),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(2.0),
@@ -566,5 +604,35 @@ class _EditTaskPageState extends State<EditTaskPage> {
             ),
           )),
     );
+  }
+
+  void descriptionOnChanged(value) {
+    var cursorPosition = _descriptionController.selection.base.offset;
+    String prefixText =
+        _descriptionController.text.substring(0, cursorPosition);
+    String suffixText = _descriptionController.text.substring(cursorPosition);
+
+    if (_descriptionText.length < value.length) {
+      if (numberingListMode && prefixText.endsWith('\n')) {
+        numbering++;
+        _descriptionController.text =
+            '$prefixText($numbering) ${suffixText.isNotEmpty ? suffixText : ''}';
+        _descriptionController.selection = TextSelection.fromPosition(
+            TextPosition(
+                offset: cursorPosition + 3 + numbering.toString().length));
+      } else if (listMode && prefixText.endsWith('\n')) {
+        _descriptionController.text =
+            '$prefixText• ${suffixText.isNotEmpty ? suffixText : ''}';
+        _descriptionController.selection = TextSelection.fromPosition(
+            TextPosition(offset: cursorPosition + 2));
+      }
+    } else {
+      if (prefixText.endsWith('\n') && numbering > 0) {
+        numbering--;
+      }
+    }
+    _descriptionText = value;
+    isSomethingChanged = true;
+    setState(() {});
   }
 }

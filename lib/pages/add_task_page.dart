@@ -1,8 +1,10 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:todo/features/bottom_sheet.dart';
 import 'package:todo/features/functions.dart';
+import 'package:todo/features/image_view.dart';
 import 'package:todo/main.dart';
 import 'package:todo/database/db_helper.dart';
 import '../assets/color_picker.dart';
@@ -124,7 +126,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _titleController.text.isNotEmpty ||
-              _descriptionController.text.isNotEmpty
+              _descriptionController.text.isNotEmpty ||
+              images.isNotEmpty
           ? () {
               DateTime dateTime = DateTime.now();
               var task = {
@@ -341,7 +344,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
                           : TextButton(
                               onPressed: () async {
                                 if (_titleController.text.isEmpty &&
-                                    _descriptionController.text.isEmpty) {
+                                    _descriptionController.text.isEmpty &&
+                                    images.isEmpty) {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
                                           duration: Duration(seconds: 2),
@@ -365,9 +369,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                                 }
                                 DateTime dateTime = DateTime.now();
                                 var task = {
-                                  'title': _titleController.text.isEmpty
-                                      ? ''
-                                      : _titleController.text,
+                                  'title': _titleController.text,
                                   'description': _descriptionController.text,
                                   'datetime':
                                       '${dateTime.hour > 12 ? (dateTime.hour - 12).toString().padLeft(2, '0') : dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} ${dateTime.hour > 12 ? 'pm' : 'am'}   ${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year}',
@@ -412,12 +414,68 @@ class _AddTaskPageState extends State<AddTaskPage> {
             },
           ),
           body: SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
+              reverse: true,
               padding:
                   const EdgeInsets.only(left: 22.0, right: 22.0, bottom: 5.0),
               child: Column(
                 children: [
-                  TextFormField(
+                  images.isNotEmpty
+                      ? SizedBox(
+                          height: MediaQuery.of(context).size.height / 3.0,
+                          child: Swiper(
+                            itemCount: images.length,
+                            scale: 0.8,
+                            index: 0,
+                            loop: false,
+                            axisDirection: AxisDirection.left,
+                            pagination: const SwiperPagination(),
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(PageTransition(
+                                      child: ImageViewer(
+                                          images: images, imageIndex: index),
+                                      type: PageTransitionType.theme,
+                                      childCurrent: widget,
+                                      duration: routAnimationDuration));
+                                },
+                                child: Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(16.0)),
+                                      child: Image.memory(
+                                        images.elementAt(index),
+                                        fit: BoxFit.cover,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                20,
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                            onPressed: () async {
+                                              images.remove(
+                                                  images.elementAt(index));
+                                              setState(() {});
+                                            },
+                                            icon: const Icon(
+                                              Icons.delete_rounded,
+                                              color: Colors.red,
+                                            ))
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : const SizedBox(),
+                  TextField(
                     onTap: () {
                       showMoreFeatures = false;
                     },
@@ -462,63 +520,60 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  Flexible(
-                    fit: FlexFit.tight,
-                    child: SingleChildScrollView(
-                      child: TextField(
-                        onTap: () {
-                          showMoreFeatures = false;
-                        },
-                        style: TextStyle(fontSize: fontSize),
-                        readOnly: readOnly,
-                        textCapitalization: TextCapitalization.sentences,
-                        onChanged: (value) {
-                          int cursorPosition =
-                              _descriptionController.selection.base.offset;
-                          String prefixText = _descriptionController.text
-                              .substring(0, cursorPosition);
-                          String suffixText = _descriptionController.text
-                              .substring(cursorPosition);
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 3,
+                    child: TextField(
+                      onTap: () {
+                        showMoreFeatures = false;
+                      },
+                      style: TextStyle(fontSize: fontSize),
+                      readOnly: readOnly,
+                      textCapitalization: TextCapitalization.sentences,
+                      onChanged: (value) {
+                        int cursorPosition =
+                            _descriptionController.selection.base.offset;
+                        String prefixText = _descriptionController.text
+                            .substring(0, cursorPosition);
+                        String suffixText = _descriptionController.text
+                            .substring(cursorPosition);
 
-                          if (_descriptionText.length < value.length) {
-                            if (numberingListMode &&
-                                prefixText.endsWith('\n')) {
-                              numbering++;
-                              _descriptionController.text =
-                                  '$prefixText($numbering) ${suffixText.isNotEmpty ? suffixText : ''}';
-                              _descriptionController.selection =
-                                  TextSelection.fromPosition(TextPosition(
-                                      offset: cursorPosition +
-                                          3 +
-                                          numbering.toString().length));
-                            } else if (listMode && prefixText.endsWith('\n')) {
-                              _descriptionController.text =
-                                  '$prefixText• ${suffixText.isNotEmpty ? suffixText : ''}';
-                              _descriptionController.selection =
-                                  TextSelection.fromPosition(
-                                      TextPosition(offset: cursorPosition + 2));
-                            }
-                          } else {
-                            if (prefixText.endsWith('\n') && numbering > 0) {
-                              numbering--;
-                            }
+                        if (_descriptionText.length < value.length) {
+                          if (numberingListMode && prefixText.endsWith('\n')) {
+                            numbering++;
+                            _descriptionController.text =
+                                '$prefixText($numbering) ${suffixText.isNotEmpty ? suffixText : ''}';
+                            _descriptionController.selection =
+                                TextSelection.fromPosition(TextPosition(
+                                    offset: cursorPosition +
+                                        3 +
+                                        numbering.toString().length));
+                          } else if (listMode && prefixText.endsWith('\n')) {
+                            _descriptionController.text =
+                                '$prefixText• ${suffixText.isNotEmpty ? suffixText : ''}';
+                            _descriptionController.selection =
+                                TextSelection.fromPosition(
+                                    TextPosition(offset: cursorPosition + 2));
                           }
-                          _descriptionText = value;
-                          setState(() {});
-                        },
-                        controller: _descriptionController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 10000,
-                        decoration: InputDecoration(
-                            hintText: 'Write here something...',
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(
-                                color: Theme.of(context).primaryColor ==
-                                        Colors.white
-                                    ? Colors.white70
-                                    : Colors.black54,
-                                fontSize: fontSize)),
-                      ),
+                        } else {
+                          if (prefixText.endsWith('\n') && numbering > 0) {
+                            numbering--;
+                          }
+                        }
+                        _descriptionText = value;
+                        setState(() {});
+                      },
+                      controller: _descriptionController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 10000,
+                      decoration: InputDecoration(
+                          hintText: 'Write here something...',
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(
+                              color:
+                                  Theme.of(context).primaryColor == Colors.white
+                                      ? Colors.white70
+                                      : Colors.black54,
+                              fontSize: fontSize)),
                     ),
                   ),
                 ],
