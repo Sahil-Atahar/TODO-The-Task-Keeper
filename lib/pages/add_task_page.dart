@@ -102,6 +102,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   static Color bgColor = Colors.white;
   Duration routAnimationDuration = const Duration(microseconds: 500);
   List<Uint8List> images = [];
+  bool reverse = false;
 
   @override
   initState() {
@@ -112,6 +113,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     showMoreFeatures = false;
     numbering = 0;
     bgColor = Colors.white;
+    reverse = false;
     images = [];
   }
 
@@ -415,9 +417,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
           ),
           body: SafeArea(
             child: SingleChildScrollView(
-              reverse: true,
+              reverse: reverse,
               padding:
-                  const EdgeInsets.only(left: 22.0, right: 22.0, bottom: 5.0),
+                  const EdgeInsets.only(left: 22.0, right: 22.0, bottom: 20.0),
               child: Column(
                 children: [
                   images.isNotEmpty
@@ -478,6 +480,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   TextField(
                     onTap: () {
                       showMoreFeatures = false;
+                      reverse = true;
                     },
                     style: TextStyle(
                         fontSize: fontSize + 2, fontWeight: FontWeight.bold),
@@ -520,11 +523,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 3,
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 15.0),
+                    height: MediaQuery.of(context).size.height / 2,
                     child: TextField(
                       onTap: () {
                         showMoreFeatures = false;
+                        reverse = true;
                       },
                       style: TextStyle(fontSize: fontSize),
                       readOnly: readOnly,

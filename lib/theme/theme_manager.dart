@@ -13,7 +13,6 @@ class ThemeManager with ChangeNotifier {
 
 ThemeData lightTheme(context) {
   return ThemeData(
-  
       textSelectionTheme: const TextSelectionThemeData(
           selectionHandleColor: Colors.transparent),
       splashFactory: NoSplash.splashFactory,
@@ -38,7 +37,6 @@ ThemeData lightTheme(context) {
 }
 
 ThemeData darkTheme(context) => ThemeData(
-      
       textSelectionTheme: const TextSelectionThemeData(
           selectionHandleColor: Colors.transparent),
       splashFactory: NoSplash.splashFactory,

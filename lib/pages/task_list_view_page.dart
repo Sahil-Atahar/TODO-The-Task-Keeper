@@ -222,7 +222,7 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                 preferredSize: Size(MediaQuery.of(context).size.width, 42.0),
                 child: Container(
                   padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                  margin: const EdgeInsets.only(bottom: 5.0),
+                  margin: const EdgeInsets.only(bottom: 3.0),
                   child: CupertinoSearchTextField(
                     controller: searchTextFieldController,
                     style: const TextStyle(fontSize: 16.0, color: Colors.black),
@@ -621,18 +621,32 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                             Visibility(
                                 visible: task['isPinned'] == 'true' ||
                                     task['isImportant'] == 'true' ||
-                                    task['isHidden'] == 'true',
-                                child: task['isHidden'] == 'true'
-                                    ? const Text(
-                                        'H',
-                                        style: TextStyle(color: Colors.white),
-                                      )
-                                    : Icon(
-                                        task['isPinned'] == 'true'
-                                            ? Icons.push_pin
-                                            : Icons.star,
-                                        color: Colors.amber,
-                                      )),
+                                    task['isHidden'] == 'true' ||
+                                    task['imagesString'].isNotEmpty,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    task['isHidden'] == 'true'
+                                        ? const Text(
+                                            'H',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )
+                                        : Icon(
+                                            task['isPinned'] == 'true'
+                                                ? Icons.push_pin
+                                                : Icons.star,
+                                            color: Colors.amber,
+                                          ),
+                                    task['imagesString'].isNotEmpty
+                                        ? const Icon(
+                                            Icons.image_outlined,
+                                            color: Colors.amber,
+                                          )
+                                        : const SizedBox()
+                                  ],
+                                )),
                             Column(
                               children: [
                                 Text(
@@ -690,15 +704,27 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                         trailing: Visibility(
                             visible: task['isPinned'] == 'true' ||
                                 task['isImportant'] == 'true' ||
-                                task['isHidden'] == 'true',
-                            child: task['isHidden'] == 'true'
-                                ? const Text('H')
-                                : Icon(
-                                    task['isPinned'] == 'true'
-                                        ? Icons.push_pin
-                                        : Icons.star,
-                                    color: Colors.amber,
-                                  )),
+                                task['isHidden'] == 'true' ||
+                                task['imagesString'].isNotEmpty,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                task['isHidden'] == 'true'
+                                    ? const Text('H')
+                                    : Icon(
+                                        task['isPinned'] == 'true'
+                                            ? Icons.push_pin
+                                            : Icons.star,
+                                        color: Colors.amber,
+                                      ),
+                                task['imagesString'].isNotEmpty
+                                    ? const Icon(
+                                        Icons.image_outlined,
+                                        color: Colors.amber,
+                                      )
+                                    : const SizedBox()
+                              ],
+                            )),
                         tileColor: Color(task['fgColor']),
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8.0)),

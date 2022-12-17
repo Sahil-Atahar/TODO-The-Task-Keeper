@@ -431,23 +431,11 @@ class _HomePageState extends State<HomePage> {
                                       curve: Curves.fastLinearToSlowEaseIn,
                                       padding: const EdgeInsets.all(18.0),
                                       decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(15.0)),
-                                          color: Color(namesList
-                                              .elementAt(itemIndex)['color']),
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Theme.of(context)
-                                                    .scaffoldBackgroundColor,
-                                                offset: const Offset(-8, -8),
-                                                blurRadius: 15.0),
-                                            BoxShadow(
-                                                color: Theme.of(context)
-                                                    .scaffoldBackgroundColor,
-                                                blurRadius: 15.0,
-                                                spreadRadius: 2.0,
-                                                offset: const Offset(8, 8))
-                                          ]),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(15.0)),
+                                        color: Color(namesList
+                                            .elementAt(itemIndex)['color']),
+                                      ),
                                       child: SingleChildScrollView(
                                         child: Column(
                                             mainAxisAlignment:

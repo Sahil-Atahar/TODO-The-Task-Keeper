@@ -453,70 +453,75 @@ class _EditTaskPageState extends State<EditTaskPage> {
           ),
           body: SafeArea(
             child: SingleChildScrollView(
-              reverse: true,
+              reverse: reverse,
               padding:
                   const EdgeInsets.only(left: 22.0, right: 22.0, bottom: 5.0),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 3.0,
-                    child: Swiper(
-                      itemCount: images.length,
-                      scale: 0.8,
-                      index: 0,
-                      loop: false,
-                      axisDirection: AxisDirection.left,
-                      pagination: const SwiperPagination(),
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(PageTransition(
-                                child: ImageViewer(
-                                    images: images, imageIndex: index),
-                                type: PageTransitionType.theme,
-                                childCurrent: widget,
-                                duration: routAnimationDuration));
-                          },
-                          onLongPress: () {
-                            imagesEditMode = !imagesEditMode;
-                            isSomethingChanged = true;
-                            setState(() {});
-                          },
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(16.0)),
-                                child: Image.memory(
-                                  images.elementAt(index),
-                                  fit: BoxFit.cover,
-                                  width: MediaQuery.of(context).size.width - 20,
-                                ),
-                              ),
-                              Visibility(
-                                visible: imagesEditMode,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                  images.isNotEmpty
+                      ? SizedBox(
+                          height: MediaQuery.of(context).size.height / 3.0,
+                          child: Swiper(
+                            itemCount: images.length,
+                            scale: 0.8,
+                            index: 0,
+                            loop: false,
+                            axisDirection: AxisDirection.left,
+                            pagination: const SwiperPagination(),
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(PageTransition(
+                                      child: ImageViewer(
+                                          images: images, imageIndex: index),
+                                      type: PageTransitionType.theme,
+                                      childCurrent: widget,
+                                      duration: routAnimationDuration));
+                                },
+                                onLongPress: () {
+                                  imagesEditMode = !imagesEditMode;
+                                  isSomethingChanged = true;
+                                  setState(() {});
+                                },
+                                child: Stack(
                                   children: [
-                                    IconButton(
-                                        onPressed: () async {
-                                          images
-                                              .remove(images.elementAt(index));
-                                          setState(() {});
-                                        },
-                                        icon: const Icon(
-                                          Icons.delete_rounded,
-                                          color: Colors.red,
-                                        ))
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(16.0)),
+                                      child: Image.memory(
+                                        images.elementAt(index),
+                                        fit: BoxFit.cover,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                20,
+                                      ),
+                                    ),
+                                    Visibility(
+                                      visible: imagesEditMode,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                              onPressed: () async {
+                                                images.remove(
+                                                    images.elementAt(index));
+                                                setState(() {});
+                                              },
+                                              icon: const Icon(
+                                                Icons.delete_rounded,
+                                                color: Colors.red,
+                                              ))
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
-                              ),
-                            ],
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ),
+                        )
+                      : const SizedBox(),
                   TextField(
                     onTap: () {
                       showMoreFeatures = false;
@@ -562,7 +567,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  SizedBox(
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 15.0),
                     height: MediaQuery.of(context).size.height / 2,
                     child: TextField(
                       onTap: () {
@@ -574,7 +580,10 @@ class _EditTaskPageState extends State<EditTaskPage> {
                       autocorrect: true,
                       mouseCursor: MouseCursor.uncontrolled,
                       textCapitalization: TextCapitalization.sentences,
-                      onChanged: (value) => descriptionOnChanged(value),
+                      onChanged: (value) {
+                        isSomethingChanged = true;
+                        descriptionOnChanged(value);
+                      },
                       controller: _descriptionController,
                       decoration: InputDecoration(
                           hintText: 'Write here something...',
