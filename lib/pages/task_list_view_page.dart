@@ -390,7 +390,7 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                       'description': task['description'],
                       'datetime':
                           '${dateTime.hour > 12 ? (dateTime.hour - 12).toString().padLeft(2, '0') : dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} ${dateTime.hour > 12 ? 'pm' : 'am'}   ${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year}',
-                      'fgColor': task['color'],
+                      'fgColor': task['fgColor'],
                       'isCompleted': task['isCompleted'],
                       'isImportant': task['isImportant'],
                       'isPinned': task['isPinned'] == 'true'
@@ -451,7 +451,7 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                       'description': task['description'],
                       'datetime':
                           '${dateTime.hour > 12 ? (dateTime.hour - 12).toString().padLeft(2, '0') : dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} ${dateTime.hour > 12 ? 'pm' : 'am'}   ${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year}',
-                      'fgColor': task['color'],
+                      'fgColor': task['fgColor'],
                       'isCompleted': task['isCompleted'] == 'false'
                           ? true.toString()
                           : false.toString(),

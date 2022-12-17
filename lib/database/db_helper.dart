@@ -20,6 +20,7 @@ class DBHelper {
   final isPinned = 'isPinned';
   final isHidden = 'isHidden';
   final bgColor = 'bgColor';
+  final imagesString = 'imagesString';
 
 
   static Database? _database;
@@ -72,7 +73,8 @@ class DBHelper {
         $isImportant,
         $isPinned,
         $isHidden,
-        $bgColor)
+        $bgColor,
+        $imagesString)
         ''');
   }
 

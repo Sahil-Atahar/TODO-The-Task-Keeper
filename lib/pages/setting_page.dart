@@ -76,7 +76,10 @@ class _SettingPageState extends State<SettingPage> {
               }),
             ),
             ListTile(
-              onTap: changeFontSize,
+              onTap: () async {
+                await changeFontSize();
+                setState(() {});
+              },
               title: Row(
                 children: const [
                   CircleAvatar(
@@ -133,9 +136,9 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  changeFontSize() {
+  Future changeFontSize() async {
     int initialFontSize = fontSize.toInt();
-    showDialog(
+    await showDialog(
         useSafeArea: true,
         context: context,
         builder: (context) => StatefulBuilder(
@@ -145,9 +148,10 @@ class _SettingPageState extends State<SettingPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                        onPressed: initialFontSize > 16
+                        onPressed: initialFontSize > 14
                             ? () {
                                 initialFontSize -= 2;
+                                
                                 setState(() {});
                               }
                             : null,

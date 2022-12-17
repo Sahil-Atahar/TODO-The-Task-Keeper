@@ -25,9 +25,23 @@ class HomePage extends StatefulWidget {
         builder: (context) => Dialog(
               clipBehavior: Clip.none,
               child: Stack(
+                alignment: Alignment.bottomCenter,
                 children: [
-                  Image.asset('assets/images/developer_image.png',
-                      fit: BoxFit.cover),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(16)),
+                    child: Image.asset(
+                      'assets/images/developer_image.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const Align(
+                    heightFactor: 0,
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      'Sahil Atahar',
+                      style: TextStyle(fontSize: 32),
+                    ),
+                  )
                 ],
               ),
             ));

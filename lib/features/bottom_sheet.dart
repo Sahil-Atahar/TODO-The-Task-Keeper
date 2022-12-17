@@ -1,6 +1,8 @@
 import 'package:clipboard/clipboard.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:todo/features/image_picker.dart';
 
 bool listMode = false;
 bool showMoreFeatures = false;
@@ -13,6 +15,7 @@ Widget customBottomSheet(
     required descriptionController,
     required Function() onChange,
     required Color bgColor,
+    required List<Uint8List> images,
     Widget deleteTaskListTile = const SizedBox()}) {
   return SingleChildScrollView(
     child: Column(
@@ -83,13 +86,24 @@ Widget customBottomSheet(
                                 ? Colors.deepOrange
                                 : Theme.of(context).primaryColor,
                             size: 22.0,
-                          ))
+                          )),
+                      IconButton(
+                          onPressed: () async {
+                            var image = await pickImageFromDevice();
+                            if (image != null) {
+                              images.add(image);
+                            }
+                            onChange();
+                          },
+                          icon: const Icon(
+                            Icons.image_outlined,
+                            size: 22.0,
+                          )),
                     ],
                   ),
                   IconButton(
                       onPressed: () {
                         showMoreFeatures = !showMoreFeatures;
-
                         onChange();
                       },
                       icon: Icon(
@@ -132,6 +146,7 @@ Widget customBottomSheet(
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Copied'),
                       behavior: SnackBarBehavior.floating,
+                      duration: Duration(seconds: 1),
                     ));
                   }),
               bottomSheetListTile(
@@ -174,7 +189,7 @@ Widget bottomSheetListTile(
     onTap: onTap,
     child: Container(
       color: tileColor,
-      height: 32.0,
+      height: 38.0,
       child: Row(
         children: [
           const SizedBox(

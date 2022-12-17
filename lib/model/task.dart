@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+
+import '../features/functions.dart';
 
 class Task {
   static int id = 0;
@@ -11,6 +15,7 @@ class Task {
   static String isPinned = '';
   static String isHidden = '';
   static int bgColor = Colors.white.value;
+  static List<Uint8List> imageBytes = [];
 
   Task(Map<String, dynamic> task) {
     id = task['id'];
@@ -23,5 +28,6 @@ class Task {
     isPinned = task['isPinned'];
     isHidden = task['isHidden'];
     bgColor = task['bgColor'];
+    imageBytes = stringToUintList(imagesString: task['imageString']);
   }
 }

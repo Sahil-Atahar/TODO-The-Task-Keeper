@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:todo/features/bottom_sheet.dart';
+import 'package:todo/features/functions.dart';
 import 'package:todo/main.dart';
 import 'package:todo/database/db_helper.dart';
 import 'package:todo/model/task.dart';
@@ -36,6 +37,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
 
     isImportant = Task.isImportant.compareTo('true') == 0 ? true : false;
     isPinned = Task.isPinned.compareTo('true') == 0 ? true : false;
+    images = Task.imageBytes;
     bgColor = Color(Task.bgColor);
   }
 
@@ -49,6 +51,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
   static bool readOnly = false;
   static String _descriptionText = '';
   static Color bgColor = Colors.white;
+  static List<Uint8List> images = [];
 
   @override
   void initState() {
@@ -80,7 +83,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
             'isImportant': isImportant.toString(),
             'isPinned': isPinned.toString(),
             'isHidden': Task.isHidden,
-            'bgColor': Task.bgColor
+            'bgColor': Task.bgColor,
+            'imagesString': imageToString(bytes: Task.imageBytes)
           };
           AddTaskPage(
             nameOfList: EditTaskPage.listName,
@@ -322,6 +326,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
                                     'isPinned': isPinned.toString(),
                                     'isHidden': Task.isHidden,
                                     'bgColor': bgColor.value,
+                                    'imagesString':
+                                        imageToString(bytes: Task.imageBytes)
                                   };
                                   DBHelper instance = DBHelper.instance;
                                   await instance.specialDelete(
@@ -365,6 +371,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                 ),
               ])),
           bottomSheet: customBottomSheet(
+            images: images,
             bgColor: Theme.of(context).brightness == Brightness.light
                 ? bgColor
                 : Theme.of(context).scaffoldBackgroundColor,
@@ -405,6 +412,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
                             'isPinned': Task.isPinned,
                             'isHidden': Task.isHidden,
                             'bgColor': Task.bgColor,
+                            'imagesString':
+                                imageToString(bytes: Task.imageBytes)
                           };
                           await instance
                               .insert(TaskListViewPage.listName, newTask)
@@ -440,8 +449,11 @@ class _EditTaskPageState extends State<EditTaskPage> {
               child: Column(
                 children: [
                   TextField(
+                    onTap: () {
+                      showMoreFeatures = false;
+                    },
                     style: TextStyle(
-                        fontSize: fontSize + 4, fontWeight: FontWeight.bold),
+                        fontSize: fontSize + 2, fontWeight: FontWeight.bold),
                     readOnly: readOnly,
                     textInputAction: TextInputAction.next,
                     inputFormatters: [
@@ -475,7 +487,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 5.0,
+                    height: 3.0,
                     child: Divider(
                       color: Theme.of(context).primaryColor,
                     ),
@@ -483,6 +495,9 @@ class _EditTaskPageState extends State<EditTaskPage> {
                   Expanded(
                     child: SingleChildScrollView(
                         child: TextField(
+                      onTap: () {
+                        showMoreFeatures = false;
+                      },
                       style: TextStyle(fontSize: fontSize),
                       readOnly: readOnly,
                       autocorrect: true,

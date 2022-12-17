@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:todo/features/bottom_sheet.dart';
+import 'package:todo/features/functions.dart';
 import 'package:todo/main.dart';
 import 'package:todo/database/db_helper.dart';
 import '../assets/color_picker.dart';
@@ -95,10 +96,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
   bool isImportant = false;
   static bool isPinned = false;
   static bool readOnly = false;
-
   static String _descriptionText = '';
   static Color bgColor = Colors.white;
   Duration routAnimationDuration = const Duration(microseconds: 500);
+  List<Uint8List> images = [];
 
   @override
   initState() {
@@ -109,6 +110,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     showMoreFeatures = false;
     numbering = 0;
     bgColor = Colors.white;
+    images = [];
   }
 
   @override
@@ -137,6 +139,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 'isPinned': isPinned.toString(),
                 'isHidden': 'false',
                 'bgColor': bgColor.value,
+                'imagesString': imageToString(bytes: images)
               };
               AddTaskPage(
                 nameOfList: AddTaskPage.listName,
@@ -374,6 +377,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                                   'isPinned': isPinned.toString(),
                                   'isHidden': 'false',
                                   'bgColor': bgColor.value,
+                                  'imagesString': imageToString(bytes: images)
                                 };
                                 await AddTaskPage(
                                   nameOfList: AddTaskPage.listName,
@@ -396,6 +400,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
             ),
           ),
           bottomSheet: customBottomSheet(
+            images: images,
             bgColor: Theme.of(context).brightness == Brightness.light
                 ? bgColor
                 : Theme.of(context).scaffoldBackgroundColor,
@@ -413,6 +418,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
               child: Column(
                 children: [
                   TextFormField(
+                    onTap: () {
+                      showMoreFeatures = false;
+                    },
                     style: TextStyle(
                         fontSize: fontSize + 2, fontWeight: FontWeight.bold),
                     readOnly: readOnly,
@@ -444,18 +452,23 @@ class _AddTaskPageState extends State<AddTaskPage> {
                           color: Theme.of(context).primaryColor == Colors.white
                               ? Colors.white70
                               : Colors.black54,
-                          fontSize: fontSize + 4),
+                          fontSize: fontSize + 2),
                       border: InputBorder.none,
                     ),
                   ),
                   SizedBox(
-                    height: 5.0,
-                    child: Divider(color: Theme.of(context).primaryColor,),
+                    height: 3.0,
+                    child: Divider(
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                   Flexible(
                     fit: FlexFit.tight,
                     child: SingleChildScrollView(
                       child: TextField(
+                        onTap: () {
+                          showMoreFeatures = false;
+                        },
                         style: TextStyle(fontSize: fontSize),
                         readOnly: readOnly,
                         textCapitalization: TextCapitalization.sentences,
