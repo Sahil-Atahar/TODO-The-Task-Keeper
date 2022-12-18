@@ -400,6 +400,10 @@ class _HomePageState extends State<HomePage> {
                                               widgetList.elementAt(index);
                                           var deletedIndex = index;
                                           widgetList.removeAt(index);
+                                          var removedListName =
+                                              namesList.elementAt(index);
+                                          var removedListIndex = index;
+                                          namesList.removeAt(index);
                                           setState(() {});
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
@@ -411,6 +415,9 @@ class _HomePageState extends State<HomePage> {
                                                 confirmDelete = false;
                                                 widgetList.insert(deletedIndex,
                                                     deletedWidget);
+                                                namesList.insert(
+                                                    removedListIndex,
+                                                    removedListName);
                                                 setState(() {});
                                               },
                                               label: 'Undo',

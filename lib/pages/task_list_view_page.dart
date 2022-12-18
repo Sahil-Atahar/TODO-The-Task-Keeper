@@ -603,11 +603,11 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                               const BorderRadius.all(Radius.circular(12.0)),
                           boxShadow: [
                             BoxShadow(
-                                color: Color(task['bgColor']),
+                                color: Theme.of(context).scaffoldBackgroundColor,
                                 offset: const Offset(-8, -8),
                                 blurRadius: 15.0),
                             BoxShadow(
-                                color: Color(task['bgColor']),
+                                color: Theme.of(context).scaffoldBackgroundColor,
                                 blurRadius: 15.0,
                                 spreadRadius: 2.0,
                                 offset: const Offset(8, 8))
