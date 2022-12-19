@@ -30,4 +30,21 @@ class Task {
     bgColor = task['bgColor'];
     imageBytes = stringToUintList(imagesString: task['imagesString']);
   }
+
+  toMap() {
+    DateTime dateTime = DateTime.now();
+    return {
+      'title': title,
+      'description': description,
+      'datetime':
+          '${dateTime.hour > 12 ? (dateTime.hour - 12).toString().padLeft(2, '0') : dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} ${dateTime.hour > 12 ? 'pm' : 'am'}   ${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year}',
+      'fgColor': fgColor,
+      'isCompleted': isCompleted,
+      'isImportant': isImportant,
+      'isPinned': isPinned,
+      'isHidden': isHidden,
+      'bgColor': bgColor,
+      'imagesString': imageToString(bytes: imageBytes)
+    };
+  }
 }

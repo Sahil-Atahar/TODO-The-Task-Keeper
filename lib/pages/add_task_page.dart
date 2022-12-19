@@ -110,7 +110,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
     isImportant = false;
     readOnly = false;
     isPinned = false;
-    showMoreFeatures = false;
     numbering = 0;
     bgColor = Colors.white;
     reverse = false;
@@ -404,7 +403,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
             ),
           ),
           bottomSheet: customBottomSheet(
+            taskId: null,
             images: images,
+            listName: null,
             bgColor: Theme.of(context).brightness == Brightness.light
                 ? bgColor
                 : Theme.of(context).scaffoldBackgroundColor,
@@ -479,7 +480,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       : const SizedBox(),
                   TextField(
                     onTap: () {
-                      showMoreFeatures = false;
                       reverse = true;
                     },
                     style: TextStyle(
@@ -528,7 +528,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     height: MediaQuery.of(context).size.height / 2,
                     child: TextField(
                       onTap: () {
-                        showMoreFeatures = false;
                         reverse = true;
                       },
                       style: TextStyle(fontSize: fontSize),

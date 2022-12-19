@@ -59,7 +59,6 @@ class _EditTaskPageState extends State<EditTaskPage> {
 
   @override
   void initState() {
-    showMoreFeatures = false;
     numbering = 0;
     reverse = false;
     super.initState();
@@ -382,6 +381,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
                 ),
               ])),
           bottomSheet: customBottomSheet(
+            listName: EditTaskPage.listName,
+            taskId: Task.id,
             images: images,
             bgColor: Theme.of(context).brightness == Brightness.light
                 ? bgColor
@@ -394,15 +395,13 @@ class _EditTaskPageState extends State<EditTaskPage> {
               setState(() {});
             },
             deleteTaskListTile: bottomSheetListTile(
-                tileColor: Colors.red,
+                tileColor: Theme.of(context).brightness == Brightness.light
+                    ? bgColor
+                    : Theme.of(context).scaffoldBackgroundColor,
                 leading: const Icon(
                   Icons.delete_forever_rounded,
-                  color: Colors.white,
                 ),
-                title: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.white),
-                ),
+                title: 'Delete',
                 onTap: () async {
                   DBHelper instance = DBHelper.instance;
                   await instance
@@ -525,7 +524,6 @@ class _EditTaskPageState extends State<EditTaskPage> {
                       : const SizedBox(),
                   TextField(
                     onTap: () {
-                      showMoreFeatures = false;
                       reverse = true;
                     },
                     style: TextStyle(
@@ -573,7 +571,6 @@ class _EditTaskPageState extends State<EditTaskPage> {
                     height: MediaQuery.of(context).size.height / 2,
                     child: TextField(
                       onTap: () {
-                        showMoreFeatures = false;
                         reverse = true;
                       },
                       style: TextStyle(fontSize: fontSize),

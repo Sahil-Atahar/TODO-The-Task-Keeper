@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-Future<Uint8List?> pickImageFromDevice() async {
+Future<Uint8List?> pickImage({required ImageSource imageSource}) async {
   var status = await Permission.storage.status;
 
   if (status.isDenied) {
@@ -11,6 +11,6 @@ Future<Uint8List?> pickImageFromDevice() async {
       return null;
     }
   }
-  var image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  var image = await ImagePicker().pickImage(source: imageSource);
   return await image!.readAsBytes();
 }

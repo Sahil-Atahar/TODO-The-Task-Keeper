@@ -53,11 +53,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   _HomePageState() {
-    widgetList = [];
-    namesList = [];
     getListOfNames();
   }
-  void getListOfNames() async {
+
+  Future getListOfNames() async {
+    widgetList = [];
+    namesList = [];
     List<Widget> singleWidgetList = [];
 
     DBHelper instance = DBHelper.instance;
@@ -396,46 +397,39 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         onPressed: () async {
                                           var confirmDelete = true;
-                                          var deletedWidget =
-                                              widgetList.elementAt(index);
-                                          var deletedIndex = index;
-                                          widgetList.removeAt(index);
-                                          var removedListName =
+                                          var removedList =
                                               namesList.elementAt(index);
-                                          var removedListIndex = index;
-                                          namesList.removeAt(index);
-                                          setState(() {});
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content:
-                                                const Text('Task List Deleted'),
-                                            behavior: SnackBarBehavior.fixed,
-                                            action: SnackBarAction(
-                                              onPressed: () async {
-                                                confirmDelete = false;
-                                                widgetList.insert(deletedIndex,
-                                                    deletedWidget);
-                                                namesList.insert(
-                                                    removedListIndex,
-                                                    removedListName);
-                                                setState(() {});
-                                              },
-                                              label: 'Undo',
-                                            ),
-                                          ));
+                                          DBHelper instance = DBHelper.instance;
+                                          await instance.deleteTableName(
+                                              namesList.elementAt(
+                                                  index)['tableName']);
+                                          await getListOfNames().then((value) =>
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                duration:
+                                                    const Duration(seconds: 3),
+                                                content: const Text(
+                                                    'Task List Deleted'),
+                                                behavior:
+                                                    SnackBarBehavior.fixed,
+                                                action: SnackBarAction(
+                                                  onPressed: () async {
+                                                    confirmDelete = false;
+                                                    await instance
+                                                        .insertTableName(
+                                                            removedList);
+                                                    await getListOfNames();
+                                                  },
+                                                  label: 'Undo',
+                                                ),
+                                              )));
+
                                           Future.delayed(
-                                              const Duration(seconds: 3),
+                                              const Duration(seconds: 5),
                                               () async {
                                             if (confirmDelete) {
-                                              DBHelper instance =
-                                                  DBHelper.instance;
-
-                                              await instance.deleteTableName(
-                                                  namesList.elementAt(
-                                                      index)['tableName']);
                                               await instance.deleteTable(
-                                                  namesList.elementAt(
-                                                      index)['tableName']);
+                                                  removedList['tableName']);
                                             }
                                           });
                                         })

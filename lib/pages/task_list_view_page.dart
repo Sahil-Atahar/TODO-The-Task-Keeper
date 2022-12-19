@@ -74,21 +74,11 @@ class TaskListViewPage extends StatefulWidget {
                             Map<String, dynamic> specialTask =
                                 (await instance.specialQuerry(listName, id))
                                     .elementAt(0);
-                            var updatedTask = {
-                              'title': specialTask['title'],
-                              'description': specialTask['description'],
-                              'datetime': specialTask['datetime'],
-                              'fgColor': specialTask['fgColor'],
-                              'isCompleted': specialTask['isCompleted'],
-                              'isImportant': specialTask['isImportant'],
-                              'isPinned': specialTask['isPinned'],
-                              'isHidden': specialTask['isHidden'],
-                              'bgColor': specialTask['bgColor'],
-                            };
                             await instance.specialDelete(
                                 listName, id.toString());
                             await instance
-                                .insert(e['tableName'], updatedTask)
+                                .insert(
+                                    e['tableName'], Task(specialTask).toMap())
                                 .then((value) => Navigator.push(
                                     context,
                                     PageTransition(
@@ -398,6 +388,7 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                           : true.toString(),
                       'isHidden': task['isHidden'],
                       'bgColor': task['bgColor'],
+                      'imagesString': task['imagesString']
                     };
                     await instance
                         .update(TaskListViewPage.listName,
@@ -459,6 +450,7 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                       'isPinned': task['isPinned'],
                       'isHidden': task['isHidden'],
                       'bgColor': task['bgColor'],
+                      'imagesString': task['imagesString']
                     };
                     DBHelper instance = DBHelper.instance;
                     await instance
@@ -475,14 +467,16 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                   }),
               FocusedMenuItem(
                   title: Text(
-                    Task.isHidden == 'true' ? 'Remove From Hide' : 'Hide Task',
+                    task['isHidden'] == 'true'
+                        ? 'Remove From Hide'
+                        : 'Hide Task',
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.black,
                     ),
                   ),
                   trailingIcon: Icon(
-                    Task.isHidden == 'true'
+                    task['isHidden'] == 'true'
                         ? Icons.remove_circle_outline
                         : Icons.visibility,
                     color: Colors.black,
@@ -499,10 +493,11 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                       'isCompleted': task['isCompleted'],
                       'isImportant': task['isImportant'],
                       'isPinned': task['isPinned'],
-                      'isHidden': Task.isHidden == 'true'
+                      'isHidden': task['isHidden'] == 'true'
                           ? false.toString()
                           : true.toString(),
-                      'bgColor': task['bgColor']
+                      'bgColor': task['bgColor'],
+                      'imagesString': task['imagesString']
                     };
                     DBHelper instance = DBHelper.instance;
                     await instance
@@ -551,19 +546,9 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                         behavior: SnackBarBehavior.fixed,
                         action: SnackBarAction(
                           onPressed: () async {
-                            var newTask = {
-                              'title': task['title'],
-                              'description': task['description'],
-                              'datetime': task['datetime'],
-                              'fgColor': task['fgColor'],
-                              'isCompleted': task['isCompleted'],
-                              'isImportant': task['isImportant'],
-                              'isPinned': task['isPinned'],
-                              'isHidden': task['isHidden'],
-                              'bgColor': task['bgColor']
-                            };
                             await instance
-                                .insert(TaskListViewPage.listName, newTask)
+                                .insert(TaskListViewPage.listName,
+                                    Task(task).toMap())
                                 .then((value) => Navigator.push(
                                     context,
                                     PageTransition(
@@ -603,11 +588,13 @@ class _TaskListViewPageState extends State<TaskListViewPage> {
                               const BorderRadius.all(Radius.circular(12.0)),
                           boxShadow: [
                             BoxShadow(
-                                color: Theme.of(context).scaffoldBackgroundColor,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
                                 offset: const Offset(-8, -8),
                                 blurRadius: 15.0),
                             BoxShadow(
-                                color: Theme.of(context).scaffoldBackgroundColor,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
                                 blurRadius: 15.0,
                                 spreadRadius: 2.0,
                                 offset: const Offset(8, 8))
