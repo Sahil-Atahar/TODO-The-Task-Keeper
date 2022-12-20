@@ -40,15 +40,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void dispose() {
-    themeManager.removeListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -61,6 +52,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    themeManager.removeListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       color: Colors.blue,
@@ -69,7 +70,7 @@ class _MyAppState extends State<MyApp> {
       darkTheme: darkTheme(context),
       themeMode: themeManager.themeMode,
       debugShowCheckedModeBanner: false,
-      home: HomePage(index: 0),
+      home: HomePage(index: -1),
     );
   }
 }

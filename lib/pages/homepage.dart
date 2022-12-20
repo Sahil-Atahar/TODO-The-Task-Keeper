@@ -417,8 +417,16 @@ class _HomePageState extends State<HomePage> {
                                                     confirmDelete = false;
                                                     await instance
                                                         .insertTableName(
-                                                            removedList);
-                                                    await getListOfNames();
+                                                            removedList)
+                                                        .then((value) => Navigator.push(
+                                                            context,
+                                                            PageTransition(
+                                                                child: HomePage(
+                                                                    index: widgetList
+                                                                            .length -
+                                                                        1),
+                                                                type: PageTransitionType
+                                                                    .theme)));
                                                   },
                                                   label: 'Undo',
                                                 ),
