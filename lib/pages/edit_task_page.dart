@@ -61,6 +61,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
   void initState() {
     numbering = 0;
     reverse = false;
+    listMode = false;
+    numberingListMode = false;
     super.initState();
   }
 

@@ -114,6 +114,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
     bgColor = Colors.white;
     reverse = false;
     images = [];
+    listMode = false;
+    numberingListMode = false;
   }
 
   @override
